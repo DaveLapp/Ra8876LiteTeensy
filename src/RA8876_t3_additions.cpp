@@ -46,32 +46,32 @@ void RA8876_t3::drawText(const char* text) {
 
 
 void RA8876_t3::drawBitmap(int16_t x, int16_t y,
-			      const uint8_t *bitmap, int16_t w, int16_t h,
-			      uint16_t color) {
+            const uint8_t *bitmap, int16_t w, int16_t h,
+            uint16_t color) {
 
   int16_t i, j, byteWidth = (w + 7) / 8;
 
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++ ) {
       if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) {
-	drawPixel(x+i, y+j, color);
+  drawPixel(x+i, y+j, color);
       }
     }
   }
 }
 
 void RA8876_t3::drawBitmap(int16_t x, int16_t y,
-			      const uint8_t *bitmap, int16_t w, int16_t h,
-			      uint16_t color, uint16_t bgcolor) {
+            const uint8_t *bitmap, int16_t w, int16_t h,
+            uint16_t color, uint16_t bgcolor) {
 
   int16_t i, j, byteWidth = (w + 7) / 8;
 // todo: optimize this with a single transaction
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++ ) {
       if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) {
-		  	drawPixel(x+i, y+j, color);
+        drawPixel(x+i, y+j, color);
       } else {
-      	drawPixel(x+i, y+j, bgcolor);
+        drawPixel(x+i, y+j, bgcolor);
       }
     }
   }
@@ -82,57 +82,57 @@ void RA8876_t3::setScroll(uint16_t offset) {
 }
 
 void RA8876_t3::measureChar(unsigned char c, uint16_t* w, uint16_t* h) {
-	if (c == 0xa0) {
-	  c = ' ';
-	}
+  if (c == 0xa0) {
+    c = ' ';
+  }
 
-	if (font) {
-		*h = font->cap_height;
-		*w = 0;
+  if (font) {
+    *h = font->cap_height;
+    *w = 0;
 
-		uint32_t bitoffset;
-		const uint8_t *data;
+    uint32_t bitoffset;
+    const uint8_t *data;
 
-		if (c >= font->index1_first && c <= font->index1_last) {
-			bitoffset = c - font->index1_first;
-			bitoffset *= font->bits_index;
-		} else if (c >= font->index2_first && c <= font->index2_last) {
-			bitoffset = c - font->index2_first + font->index1_last - font->index1_first + 1;
-			bitoffset *= font->bits_index;
-		} else if (font->unicode) {
-			return; // TODO: implement sparse unicode
-		} else {
-			return;
-		}
+    if (c >= font->index1_first && c <= font->index1_last) {
+      bitoffset = c - font->index1_first;
+      bitoffset *= font->bits_index;
+    } else if (c >= font->index2_first && c <= font->index2_last) {
+      bitoffset = c - font->index2_first + font->index1_last - font->index1_first + 1;
+      bitoffset *= font->bits_index;
+    } else if (font->unicode) {
+      return; // TODO: implement sparse unicode
+    } else {
+      return;
+    }
 
-		data = font->data + fetchbits_unsigned(font->index, bitoffset, font->bits_index);
+    data = font->data + fetchbits_unsigned(font->index, bitoffset, font->bits_index);
 
-		uint32_t encoding = fetchbits_unsigned(data, 0, 3);
+    uint32_t encoding = fetchbits_unsigned(data, 0, 3);
 
-		if (encoding != 0) return;
+    if (encoding != 0) return;
 
-		//uint32_t width =
-		fetchbits_unsigned(data, 3, font->bits_width);
-		bitoffset = font->bits_width + 3;
+    //uint32_t width =
+    fetchbits_unsigned(data, 3, font->bits_width);
+    bitoffset = font->bits_width + 3;
 
-		//uint32_t height =
-		fetchbits_unsigned(data, bitoffset, font->bits_height);
-		bitoffset += font->bits_height;
+    //uint32_t height =
+    fetchbits_unsigned(data, bitoffset, font->bits_height);
+    bitoffset += font->bits_height;
 
-		//int32_t xoffset =
-		fetchbits_signed(data, bitoffset, font->bits_xoffset);
-		bitoffset += font->bits_xoffset;
+    //int32_t xoffset =
+    fetchbits_signed(data, bitoffset, font->bits_xoffset);
+    bitoffset += font->bits_xoffset;
 
-		//int32_t yoffset =
-		fetchbits_signed(data, bitoffset, font->bits_yoffset);
-		bitoffset += font->bits_yoffset;
+    //int32_t yoffset =
+    fetchbits_signed(data, bitoffset, font->bits_yoffset);
+    bitoffset += font->bits_yoffset;
 
-		uint32_t delta = fetchbits_unsigned(data, bitoffset, font->bits_delta);
-		*w = delta;
-	} else {
-		*w = 6 * textsize;
-		*h = 8 * textsize;
-	}
+    uint32_t delta = fetchbits_unsigned(data, bitoffset, font->bits_delta);
+    *w = delta;
+  } else {
+    *w = 6 * textsize;
+    *h = 8 * textsize;
+  }
 
 }
 
