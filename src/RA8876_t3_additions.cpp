@@ -175,19 +175,19 @@ uint16_t RA8876_t3::measureTextHeight(const char* text, int num) {
 }
 
 void RA8876_t3::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t* colors) {
-  putPicture( x,  y, 1, h, (const unsigned char *)colors);
-/*  // TODO - optimize?
+//  putPicture( x,  y, 1, h, (const unsigned char *)colors);
+  // TODO - optimize?
   for (uint16_t i = 0; i < h; i++) {
     drawPixel(x,y+i,colors[i]);
   }
-*/
+
 }
 
 void RA8876_t3::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t* colors) {
-  putPicture(x,y,w,1,(const unsigned char*)colors);
-/*  // TODO - optimize?
+//  putPicture(x,y,w,1,(const unsigned char*)colors);
+  // TODO - optimize?
   for (uint16_t i = 0; i < w; i++) {
     drawPixel(x+i,y,colors[i]);
   }
-*/
+
 }

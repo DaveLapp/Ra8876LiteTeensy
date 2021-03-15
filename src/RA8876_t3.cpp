@@ -4802,13 +4802,14 @@ void RA8876_t3::_fontWrite(const uint8_t* buffer, uint16_t len)
 
 	while(len) {
 		uint8_t c = *buffer++;
+		uint8_t next = *buffer;
 		if (font) {
 			//Serial.printf("ILI: %c, %d, %d\n", c, _cursorX, _cursorY);
-			if (c == '\n') {
-				//_cursorY += font->line_space;
-				//_cursorX  = 0;
+			if (c == '\n') {  // newline
+				_cursorY += font->line_space;
+				_cursorX  = 0;
 			} else {
-			  if (c == 13) {
+			  if (c == 13 && next != '\n') {   // carriage return (unless followed by newline)
 				_cursorY += font->line_space;
 				_cursorX  = 0;
 			  } else {
