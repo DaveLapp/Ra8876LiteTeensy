@@ -124,6 +124,17 @@ const ru32 SPIspeed = 47000000;
 // Max. size in byte of SDRAM
 const uint32_t MEM_SIZE_MAX	= 16l*1024l*1024l;
 
+enum alignment_t {
+  ALIGN_DEFAULT = 0, // equivalent to ALIGN_LEFT | ALIGN_TOP, for now (latin script)
+  ALIGN_LEFT = 1,
+  ALIGN_HCENTER = 2,
+  ALIGN_CENTER = 2,  // an alias for ALIGN_HCENTER
+  ALIGN_RIGHT = 4,
+
+  ALIGN_TOP = 8,
+  ALIGN_VCENTER = 16,
+  ALIGN_BOTTOM = 32
+};
 
 class RA8876_t3 : public Print
 {
@@ -286,8 +297,38 @@ public:
 	void scrollDown(void);
 	void putString(ru16 x0,ru16 y0, const char *str);
 	void writeStatusLine(ru16 x0, uint16_t fgcolor, uint16_t bgcolor, const char *str);	
-	
-	
+
+/////////////////////////////////////////
+/* TODO - See RA8876_t3_additions.cpp */
+	void drawText(const char* text);
+	void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color);
+	void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bgcolor);
+	void setScroll(uint16_t offset);
+	void measureChar(uint8_t c, uint16_t* w, uint16_t* h);
+	uint16_t measureTextWidth(const char* text, int chars = 0);
+	uint16_t measureTextHeight(const char* text, int chars = 0);
+	void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t* colors);
+	void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t* colors);
+
+	void drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, uint16_t color) {
+		drawRoundRect(x0, y0, w, h, radius, radius, color);
+	}
+	void fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, uint16_t color){
+		fillRoundRect(x0, y0, w, h, radius, radius, color);
+	}
+
+	uint16_t fontCapHeight() { return (font) ? font->cap_height : textsize * 8; }
+	uint16_t fontLineSpace() { return (font) ? font->line_space : textsize * 8; }
+	uint16_t fontGap() { return (font) ? font->line_space - font->cap_height : 0; };
+  alignment_t setTextAlign(alignment_t align = ALIGN_DEFAULT) { alignment_t oldalign = _textalign; _textalign = align; return oldalign; }
+  alignment_t getTextAlign() { return _textalign; }
+	// Pass 8-bit (each) R,G,B, get back 16-bit packed color
+	static uint16_t color565(uint8_t r, uint8_t g, uint8_t b) {
+		return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+	}
+	alignment_t _textalign;
+///////////////////////////////////////////
+
 	/* Screen Functions */
 	void selectScreen(uint8_t screenPage);
 	void saveTFTParams(tftSave_t *screenSave);

@@ -6459,10 +6459,11 @@ Vertical Scan direction
 1 : From bottom to Top
 PIP window will be disabled when VDIR set as 1.
 */
-  
-	unsigned char temp, temp_in;
-	
-	temp_in =  temp = lcdRegDataRead(RA8876_DPCR);
+
+	unsigned char temp;
+
+	temp = lcdRegDataRead(RA8876_DPCR);
+//unsigned char temp_in = temp;
 	temp |= cSetb3;
 	lcdRegDataWrite(RA8876_DPCR, temp);
 //	Serial.printf("call vscan_b_to_t %x %x\n", temp_in, temp);
