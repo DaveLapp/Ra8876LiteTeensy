@@ -175,19 +175,28 @@ uint16_t RA8876_t3::measureTextHeight(const char* text, int num) {
 }
 
 void RA8876_t3::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t* colors) {
-//  putPicture( x,  y, 1, h, (const unsigned char *)colors);
+  putPictureRotated(x,y,1,h, (const unsigned char *)colors);
   // TODO - optimize?
-  for (uint16_t i = 0; i < h; i++) {
-    drawPixel(x,y+i,colors[i]);
-  }
+//  for (uint16_t i = 0; i < h; i++) {
+//    drawPixel(x,y+i,colors[i]);
+//  }
 
 }
 
 void RA8876_t3::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t* colors) {
-//  putPicture(x,y,w,1,(const unsigned char*)colors);
-  // TODO - optimize?
-  for (uint16_t i = 0; i < w; i++) {
-    drawPixel(x+i,y,colors[i]);
-  }
+  putPictureRotated(x,y,w,1,(const unsigned char*)colors);
+//  // TODO - optimize?
+//  for (uint16_t i = 0; i < w; i++) {
+//    drawPixel(x+i,y,colors[i]);
+//  }
 
+}
+
+
+void RA8876_t3::putPictureRotated(ru16 x, ru16 y, ru16 w, ru16 h, const unsigned char *data) {
+// TODO: Make the original work with rotation
+    bteMpuWriteWithROPData8(currentPage, height(), y, x,  //Source 1 is ignored for ROP 12
+                              currentPage, height(), y, x, h, w,     //destination address, pagewidth, x/y, width/height
+                              RA8876_BTE_ROP_CODE_12,
+                              data);
 }

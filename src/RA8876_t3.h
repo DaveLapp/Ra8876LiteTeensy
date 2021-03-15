@@ -307,6 +307,8 @@ public:
 	void measureChar(uint8_t c, uint16_t* w, uint16_t* h);
 	uint16_t measureTextWidth(const char* text, int chars = 0);
 	uint16_t measureTextHeight(const char* text, int chars = 0);
+
+	void putPictureRotated(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const unsigned char *data);
 	void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t* colors);
 	void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t* colors);
 
