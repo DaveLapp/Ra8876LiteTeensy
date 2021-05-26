@@ -164,7 +164,8 @@ void SSD2828::initialize(void)
   SPI_WriteData(0x00);
 
   SPI_WriteCmd(0xBA);   // PLL=(TX_CLK/MS)*NS
-  SPI_WriteData(0x20);  // 14,D7-0=NS(0x01 : NS=1)
+ // SPI_WriteData(0x20);  // 14,D7-0=NS(0x01 : NS=1)
+  SPI_WriteData(0x25);  // 14,D7-0=NS(0x01 : NS=1)
   SPI_WriteData(0x82);  // 42,D15-14=PLL00=62.5-125 01=126-250 10=251-500 11=501-1000  DB12-8=MS(01:MS=1)
 
   SPI_WriteCmd(0xBB);   // LP Clock Divider LP clock = 400MHz / LPD / 8 = 480 / 8/ 8 = 7MHz
@@ -459,7 +460,8 @@ void SSD2828::initialize(void)
   SPI_WriteData(0x00);
 
   SPI_WriteCmd(0xBA);
-  SPI_WriteData(0x20);  // 14,D7-0=NS(0x01 : NS=1)
+//  SPI_WriteData(0x20);  // 14,D7-0=NS(0x01 : NS=1)
+  SPI_WriteData(0x25);  // 14,D7-0=NS(0x01 : NS=1)
   SPI_WriteData(0x82);  // 42,D15-14=PLL00=62.5-125 01=126-250 10=251-500 11=501-1000  DB12-8=MS(01:MS=1)
 
   SPI_WriteCmd(0xBB);   // LP Clock Divider LP clock = 400MHz / LPD / 8 = 480 / 8/ 8 = 7MHz

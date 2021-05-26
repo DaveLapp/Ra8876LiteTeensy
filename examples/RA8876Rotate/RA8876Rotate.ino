@@ -1,18 +1,30 @@
 #include <SPI.h>
-#include "RA8876_t3.h"
-#define RA8876_CS 10
-#define RA8876_RESET 9
+#include "ER-TFT0784_t3.h"
+
+// Pin connection mapping
+ER_TFT0784_t3 tft = ER_TFT0784_t3(
+// Teensy pin  // Display        pin
+		10,        // RA8876 CS      5
+		14,        // RA8876 RESET   11
+		11,        // RA8876 MOSI    7
+		13,        // RA8876 SCLK    8
+		12,        // RA8876 MISO    6
+		15,        // SSD2828 CS     31
+		17,        // SSD2828 RESET  32
+		8,         // SSD2828 SDI    34
+		16         // SSD2828 SCK    35
+);
+
+//External backlight control connected to this Arduino pin
+#define BACKLITE 9 // Display pin: 14
 #define PINK        0xFC18
 #include "font_Arial.h"
-#define BACKLITE 5 //External backlight control connected to this Arduino pin
 
 #define REG_DUMP_CNT  0 //0x70
 uint8_t reg_values[REG_DUMP_CNT];
 
 #define USE_STATUS_LINE
 
-
-RA8876_t3 tft = RA8876_t3(RA8876_CS, RA8876_RESET); //Using standard SPI pins
 
 void setup() {
   Serial.begin(38400);

@@ -46,11 +46,24 @@
 */
 #include "Cube_172.h"
 
-#include <RA8876_t3.h>
-#define RA8876_CS 10
-#define RA8876_RESET 8
-#define BACKLITE 7 //My copy of the display is set for external backlight control
-RA8876_t3 tft = RA8876_t3(RA8876_CS, RA8876_RESET); //Using standard SPI pins
+#include <ER-TFT0784_t3.h>
+
+// Pin connection mapping
+ER_TFT0784_t3 tft = ER_TFT0784_t3(
+// Teensy pin  // Display        pin
+		10,        // RA8876 CS      5
+		14,        // RA8876 RESET   11
+		11,        // RA8876 MOSI    7
+		13,        // RA8876 SCLK    8
+		12,        // RA8876 MISO    6
+		15,        // SSD2828 CS     31
+		17,        // SSD2828 RESET  32
+		8,         // SSD2828 SDI    34
+		16         // SSD2828 SCK    35
+);
+
+//External backlight control connected to this Arduino pin
+#define BACKLIGHT 9 // Display pin: 14
 
 
 void writeImage(int x, int y, int w, int h, const unsigned char *image) {
@@ -162,9 +175,9 @@ void setup() {
   //backlight control instead of the internal RA8876 PWM.
   //Connect a Teensy pin to pin 14 on the display.
   //Can use analogWrite() but I suggest you increase the PWM frequency first so it doesn't sing.
-  pinMode(BACKLITE, OUTPUT);
+  pinMode(BACKLIGHT, OUTPUT);
 //  analogWriteFrequency(BACKLITE, 1000000);
-  digitalWrite(BACKLITE, HIGH);
+  digitalWrite(BACKLIGHT, HIGH);
 //  analogWrite(BACKLITE, 256);
 
   bool result = tft.begin();
@@ -173,22 +186,59 @@ void setup() {
     Serial.println("TFT initialization failed!");
     Serial.println("Is it plugged in properly?");
   }
-
-
+  tft.setRotation(3);
   tft.fillScreen(DARKBLUE);
   tft.setFontSize(1, false);
-
+#if 0
   //draw some background images, to try out different ROPs
   for (int j = 0; j < 3; j++) {
     for (int i = 0; i < 5; i++) {
       drawBG(20 + i * (20 + IMG_WIDTH), 5 + j * (24 + IMG_HEIGHT), IMG_HEIGHT, IMG_WIDTH);
     }
   }
-  tft.setCursor(20 + 4 * (20 + IMG_WIDTH), 5 + 2 * (24 + IMG_HEIGHT) + IMG_HEIGHT);
+
+ // tft.setCursor(20 + 4 * (20 + IMG_WIDTH), 5 + 2 * (24 + IMG_HEIGHT) + IMG_HEIGHT);
+  tft.setCursor(0, 0);
+  tft.print("0,0");
+  
+  Serial.println("0,0 done PRESS ANY KEY...");
+
+  while (Serial.available() == 0) {
+    //wait forever for any key press on Serial Monitor
+  }
+    while (Serial.available() > 0) {
+    Serial.read(); //clear input buffer
+  }
+  
+  tft.setCursor(300, 1270);
+  tft.print("400, 1280");
+  Serial.println("400,1280 done PRESS ANY KEY...");
+
+  while (Serial.available() == 0) {
+    //wait forever for any key press on Serial Monitor
+  }
+    while (Serial.available() > 0) {
+    Serial.read(); //clear input buffer
+  }
+
+  tft.setCursor(300, 0);
+  tft.print("400,0");
+    Serial.println("400,0 PRESS ANY KEY...");
+ 
+  while (Serial.available() == 0) {
+    //wait forever for any key press on Serial Monitor
+  }
+    while (Serial.available() > 0) {
+    Serial.read(); //clear input buffer
+  }
+  tft.setCursor(0, 1260);
+  tft.print("0,1280");
+  #endif
+  tft.setCursor(50, 50);
   tft.setTextColor(WHITE, DARKBLUE);
   tft.print("Background");
 
-
+#if 0
   //This example sends the image three times, so you can see the
   //different trade-offs using either put-picture, 8-bit or 16-bit transfers...
 
@@ -295,7 +345,7 @@ void setup() {
 
   //If you need to examine your chromakey zoomed-in, looking for errant pixels, try this...
   //writeImageChromakeyZoom(20 + 2*(IMG_WIDTH + 20), 5, IMG_WIDTH, IMG_HEIGHT, 0xffdf, 3, image_565);
-
+#endif // 0
 
 
 
@@ -311,7 +361,7 @@ void setup() {
   //Now I want to try some different usage of the BTE functions but I've run out of space on this page
   //Jump to 2nd page, but we'll be using the data (image and background) off the first page...
 
-  tft.selectScreen(SCREEN_2);
+  tft.selectScreen(2);
   tft.fillScreen(DARKGREEN);
   tft.setCursor(400, 180);
   tft.setTextColor(WHITE, DARKGREEN);
@@ -330,8 +380,8 @@ void loop() {
   tft.print(alpha);
   tft.print("  ");
 
-  tft.bteMemoryCopyWindowAlpha(SCREEN_1, tft.width(), 20, 5,  //source 0, our cube image
-                               SCREEN_1, tft.width(), 20 + 4 * (20 + IMG_WIDTH), 5 + 2 * (24 + IMG_HEIGHT), //source 1 (I'm calling it background) from the bottom-right square
+  tft.bteMemoryCopyWindowAlpha(1, tft.width(), 20, 5,  //source 0, our cube image
+                               1, tft.width(), 20 + 4 * (20 + IMG_WIDTH), 5 + 2 * (24 + IMG_HEIGHT), //source 1 (I'm calling it background) from the bottom-right square
                                tft.currentPage, tft.width(), 400, 200, IMG_WIDTH, IMG_HEIGHT,     //destination address, x/y, width/height
                                alpha);
 

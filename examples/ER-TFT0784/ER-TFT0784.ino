@@ -15,10 +15,10 @@ ER_TFT0784_t3 tft = ER_TFT0784_t3(
 		11,        // RA8876 MOSI    7
 		13,        // RA8876 SCLK    8
 		12,        // RA8876 MISO    6
-		36,        // SSD2828 CS     31
-		38,        // SSD2828 RESET  43
-		4,         // SSD2828 SDI    34
-		37         // SSD2828 SCK    35
+		15,        // SSD2828 CS     31
+		17,        // SSD2828 RESET  32
+		8,         // SSD2828 SDI    34
+		16         // SSD2828 SCK    35
 );
 
 //External backlight control connected to this Arduino pin
